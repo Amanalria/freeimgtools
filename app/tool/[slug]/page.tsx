@@ -99,7 +99,7 @@ export default function WorkstationPage() {
         const font = await doc.embedFont(pdfLib.StandardFonts.Helvetica);
         page.drawText(payload, { x: 50, y: 780, size: settings.fontSize || 12, font, color: pdfLib.rgb(0.1, 0.1, 0.1) });
         const bytes = await doc.save();
-        const blob = new Blob([bytes], { type: 'application/pdf' });
+        const blob = new Blob([bytes as any], { type: 'application/pdf' });
         setResult({ url: URL.createObjectURL(blob), filename: 'document.pdf', type: 'pdf', size: blob.size });
       } 
       else if (tool.category === 'image' && file) {
@@ -207,7 +207,7 @@ export default function WorkstationPage() {
           });
         }
         const bytes = await doc.save();
-        const blob = new Blob([bytes], { type: 'application/pdf' });
+        const blob = new Blob([bytes as any], { type: 'application/pdf' });
         setResult({ url: URL.createObjectURL(blob), filename: `freeimgtools_${file.name}`, type: 'pdf', size: blob.size });
       } else {
         alert("Tool not fully implemented yet!");

@@ -86,7 +86,7 @@ export const ToolSettingsPanel: React.FC<ToolSettingsPanelProps> = ({
                   onChange={(e) => onChange(field.id, e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-bg-elevated border border-border text-xs text-text-primary focus:outline-none focus:border-accent-primary"
                 >
-                  {field.options?.map((opt) => (
+                  {field.options?.map((opt: any) => (
                     <option key={opt.value} value={opt.value} className="bg-bg-secondary text-text-primary">
                       {opt.label}
                     </option>

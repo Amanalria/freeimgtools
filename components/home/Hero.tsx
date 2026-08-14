@@ -108,7 +108,7 @@ export const Hero: React.FC = () => {
         (t) =>
           t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           t.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          t.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+          t.tags?.some((tag: any) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
       ).slice(0, 5)
     : [];
 

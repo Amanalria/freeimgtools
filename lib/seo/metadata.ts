@@ -88,7 +88,7 @@ export function generateToolJsonLd(tool: ToolItem) {
       ? {
           "@context": "https://schema.org",
           "@type": "FAQPage",
-          mainEntity: tool.faqs.map((faq) => ({
+          mainEntity: tool.faqs?.map((faq: any) => ({
             "@type": "Question",
             name: faq.question,
             acceptedAnswer: {
