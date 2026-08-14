@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>FreeImgTools — 106 Free Image & PDF Tools | 100% In-Browser</title>
+  <meta name="description" content="106 free online image & PDF tools. Compress to target KB/MB, convert, resize, merge, split, sign — 100% client-side. Zero uploads." />
+
+  <!-- Google Fonts: Inter & JetBrains Mono & Calligraphy -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Great+Vibes&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Pacifico&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons & PDF-Lib & QRCode CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+  <style>
+    /* ─── CLAUDE OPUS DESIGN TOKENS (ZERO GRADIENTS / ZINC NEUTRALS) ─── */
+    :root {
+      --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+      /* LIGHT PALETTE */
+      --c-bg-0: #FFFFFF;
+      --c-bg-1: #FAFAFA;
+      --c-bg-2: #F4F4F5;
+      --c-fg-0: #09090B;
+      --c-fg-1: #27272A;
+      --c-fg-2: #52525B;
+      --c-fg-3: #A1A1AA;
+      --c-border: #E4E4E7;
+      --c-border-subtle: #F4F4F5;
+      --c-accent: #2563EB;
+      --c-accent-fg: #FFFFFF;
+      --c-accent-subtle: #EFF6FF;
+      --c-accent-muted: #DBEAFE;
+      --c-success: #16A34A;
+      --c-success-subtle: #F0FDF4;
+      --c-surface-raised: #FFFFFF;
+      --c-overlay: rgba(0, 0, 0, 0.5);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+
+    .dark {
+      /* DARK PALETTE (PITCH BLACK & ZINC NEUTRALS) */
+      --c-bg-0: #09090B;
+      --c-bg-1: #111113;
+      --c-bg-2: #18181B;
+      --c-fg-0: #FAFAFA;
+      --c-fg-1: #E4E4E7;
+      --c-fg-2: #A1A1AA;
+      --c-fg-3: #52525B;
+      --c-border: #27272A;
+      --c-border-subtle: #1C1C1F;
+      --c-accent: #3B82F6;
+      --c-accent-fg: #FFFFFF;
+      --c-accent-subtle: rgba(59, 130, 246, 0.12);
+      --c-accent-muted: rgba(59, 130, 246, 0.22);
+      --c-success: #22C55E;
+      --c-success-subtle: rgba(34, 197, 94, 0.12);
+      --c-surface-raised: #18181B;
+      --c-overlay: rgba(0, 0, 0, 0.75);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ─── RESET & RIGID OVERFLOW PROTECTION ─── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      overflow-wrap: break-word;
+    }
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      background: var(--c-bg-0);
+      color: var(--c-fg-0);
+      font-family: var(--sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    ::selection { background: var(--c-accent-muted); color: var(--c-fg-0); }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--c-fg-3); }
+
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+    input, select, textarea { font: inherit; color: inherit; }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    @media (max-width: 640px) { .container { padding: 0 12px; } }
+
+    /* ─── BADGES & BUTTONS ─── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      background: var(--c-accent-subtle);
+      color: var(--c-accent);
+      border: 1px solid var(--c-accent-muted);
+    }
+    .badge-popular {
+      background: var(--c-accent);
+      color: var(--c-accent-fg);
+      border-color: transparent;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      background: var(--c-accent);
+      color: var(--c-accent-fg);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      box-shadow: var(--shadow-sm);
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--c-fg-2);
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid var(--c-border);
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .btn-ghost:hover {
+      background: var(--c-bg-2);
+      color: var(--c-fg-0);
+      border-color: var(--c-fg-3);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: var(--radius-md);
+      background: var(--c-bg-1);
+      border: 1px solid var(--c-border);
+      font-size: 13px;
+      color: var(--c-fg-0);
+      transition: border-color 0.15s;
+    }
+    .input-field:focus { outline: none; border-color: var(--c-accent); }
+    .input-field::placeholder { color: var(--c-fg-3); }
+
+    /* ─── SINGLE-LINE MOBILE & DESKTOP NAVBAR ─── */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--c-bg-0);
+      border-bottom: 1px solid var(--c-border);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 54px;
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: hidden;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      background: var(--c-accent);
+      color: var(--c-accent-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-text {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+    .logo-text span { color: var(--c-accent); }
+
+    /* Nav Links: All, Image, PDF (Compact & Single-Line) */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .nav-link {
+      padding: 5px 9px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--c-fg-2);
+      white-space: nowrap;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-link:hover { color: var(--c-fg-0); background: var(--c-bg-2); }
+    .nav-link.active { color: var(--c-fg-0); background: var(--c-bg-2); font-weight: 700; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-box input {
+      width: 160px;
+      padding: 5px 10px 5px 28px;
+      border-radius: var(--radius-sm);
+      background: var(--c-bg-1);
+      border: 1px solid var(--c-border);
+      font-size: 12px;
+      color: var(--c-fg-0);
+      transition: border-color 0.15s, width 0.2s;
+    }
+    .search-box input:focus { outline: none; border-color: var(--c-accent); width: 200px; }
+    .search-box .search-icon {
+      position: absolute;
+      left: 8px;
+      color: var(--c-fg-3);
+      pointer-events: none;
+    }
+
+    /* On Mobile (< 720px): Hide header search so All, Image, PDF, E-Sign & Dark/Light stay on ONE CLEAN LINE */
+    @media (max-width: 720px) {
+      .search-box { display: none; }
+      .desktop-tab-text { display: none; }
+      .header-actions { flex-direction: row-reverse; }
+      .header-inner { gap: 6px; }
+      .logo-text { font-size: 14px; }
+      .nav-links { gap: 6px; }
+      .nav-link { padding: 4px 7px; font-size: 11px; }
+      .btn-primary.header-esign { padding: 5px 10px; font-size: 11px; }
+      .theme-btn { width: 30px; height: 30px; }
+    }
+    @media (max-width: 400px) {
+      .logo-text span { display: none; }
+      .nav-links { gap: 4px; }
+      .nav-link { padding: 3px 5px; font-size: 10px; }
+    }
+
+    .theme-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--c-border);
+      background: var(--c-bg-1);
+      color: var(--c-fg-2);
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .theme-btn:hover { background: var(--c-bg-2); color: var(--c-fg-0); }
+
+    /* ─── CLAUDE OPUS HERO ─── */
+    .hero {
+      padding: 56px 0 40px;
+      text-align: center;
+      border-bottom: 1px solid var(--c-border);
+      background: var(--c-bg-0);
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--c-fg-0);
+      margin-bottom: 12px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--c-accent);
+    }
+    .hero p {
+      font-size: 15px;
+      color: var(--c-fg-2);
+      max-width: 560px;
+      margin: 0 auto 20px;
+      line-height: 1.6;
+    }
+    .hero-search {
+      max-width: 460px;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+    .hero-search input {
+      width: 100%;
+      padding: 12px 16px 12px 42px;
+      border-radius: var(--radius-md);
+      background: var(--c-bg-1);
+      border: 1px solid var(--c-border);
+      font-size: 14px;
+      color: var(--c-fg-0);
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .hero-search input:focus { outline: none; border-color: var(--c-accent); box-shadow: var(--shadow-md); }
+    .hero-search .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--c-fg-3);
+      pointer-events: none;
+    }
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* ─── CLAUDE OPUS 1PX GAP METRICS ─── */
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--c-border);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin: 32px 0;
+    }
+    @media (max-width: 768px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+    .metric {
+      padding: 18px 14px;
+      background: var(--c-bg-0);
+      text-align: center;
+    }
+    .metric-value {
+      font-size: 24px;
+      font-weight: 800;
+      font-family: var(--mono);
+      color: var(--c-fg-0);
+      letter-spacing: -0.02em;
+    }
+    .metric-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--c-fg-1);
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .metric-sub {
+      font-size: 11px;
+      color: var(--c-fg-3);
+      margin-top: 2px;
+    }
+
+    /* ─── FILTER BAR & GRID ─── */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab-group {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 3px;
+      border-radius: var(--radius-md);
+      background: var(--c-bg-2);
+      border: 1px solid var(--c-border);
+    }
+    .tab-btn {
+      padding: 6px 14px;
+      border-radius: calc(var(--radius-md) - 2px);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--c-fg-2);
+      transition: background 0.15s, color 0.15s;
+    }
+    .tab-btn:hover { color: var(--c-fg-0); }
+    .tab-btn.active {
+      background: var(--c-surface-raised);
+      color: var(--c-fg-0);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sort-select {
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--c-bg-1);
+      border: 1px solid var(--c-border);
+      font-size: 12px;
+      color: var(--c-fg-1);
+    }
+    .sort-select:focus { outline: none; border-color: var(--c-accent); }
+
+    /* ─── TOOL CARDS ─── */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .tool-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      background: var(--c-bg-0);
+      border: 1px solid var(--c-border);
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    }
+    .tool-card:hover {
+      border-color: var(--c-fg-3);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .card-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .card-icon.img { background: var(--c-accent-subtle); color: var(--c-accent); }
+    .card-icon.pdf { background: var(--c-success-subtle); color: var(--c-success); }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--c-fg-0);
+      margin-bottom: 4px;
+    }
+    .card-desc {
+      font-size: 12px;
+      color: var(--c-fg-2);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--c-border-subtle);
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--c-fg-3);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .card-footer .arrow {
+      color: var(--c-accent);
+      font-weight: 700;
+      transition: transform 0.15s;
+    }
+    .tool-card:hover .card-footer .arrow { transform: translateX(3px); }
+
+    /* ─── DEDICATED TOOL WORKSTATION VIEW (ROUTED ON #/tool/:slug) ─── */
+    #workstation-view {
+      display: none;
+      padding: 32px 20px 64px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .workstation-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--c-fg-2);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--c-bg-1);
+      border: 1px solid var(--c-border);
+    }
+    .back-link:hover { color: var(--c-fg-0); background: var(--c-bg-2); }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+    }
+    @media (max-width: 860px) { .modal-grid { grid-template-columns: 1fr; } }
+
+    .stage-card {
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      background: var(--c-bg-0);
+      border: 1px solid var(--c-border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .dropzone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 44px 20px;
+      border: 2px dashed var(--c-border);
+      border-radius: var(--radius-md);
+      background: var(--c-bg-1);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      text-align: center;
+    }
+    .dropzone:hover {
+      border-color: var(--c-accent);
+      background: var(--c-accent-subtle);
+    }
+    .dropzone-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--c-accent-subtle);
+      color: var(--c-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .dropzone-title { font-size: 14px; font-weight: 700; color: var(--c-fg-0); }
+    .dropzone-sub { font-size: 12px; color: var(--c-fg-3); margin-top: 4px; }
+
+    .file-tag {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      background: var(--c-bg-2);
+      border: 1px solid var(--c-border);
+      margin-top: 14px;
+    }
+    .file-tag-info { display: flex; align-items: center; gap: 10px; }
+    .file-tag-name { font-size: 13px; font-weight: 600; color: var(--c-fg-0); }
+    .file-tag-size { font-size: 11px; color: var(--c-fg-3); font-family: var(--mono); }
+    .file-tag-remove { color: var(--c-fg-3); transition: color 0.15s; cursor: pointer; }
+    .file-tag-remove:hover { color: #EF4444; }
+
+    .progress-bar-wrap {
+      padding: 14px;
+      border-radius: var(--radius-md);
+      background: var(--c-bg-2);
+      border: 1px solid var(--c-border);
+      margin-top: 14px;
+      display: none;
+    }
+    .progress-bar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .progress-bar-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--c-fg-1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .progress-bar-pct {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--c-accent);
+      font-weight: 700;
+    }
+    .progress-track {
+      height: 4px;
+      border-radius: 2px;
+      background: var(--c-border);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--c-accent);
+      width: 0%;
+      transition: width 0.2s;
+    }
+
+    .result-panel {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: var(--radius-md);
+      background: var(--c-bg-2);
+      border: 1px solid var(--c-border);
+      display: none;
+    }
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--c-border);
+    }
+    .result-success {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--c-success);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .result-savings {
+      font-size: 11px;
+      font-family: var(--mono);
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: var(--c-success-subtle);
+      color: var(--c-success);
+      border: 1px solid var(--c-success);
+    }
+    .result-preview {
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--c-border);
+      background: var(--c-bg-1);
+      padding: 8px;
+      text-align: center;
+      max-height: 240px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .result-preview img { max-height: 220px; width: auto; object-fit: contain; }
+    .result-preview iframe { width: 100%; height: 220px; border: none; }
+    .result-actions { display: flex; gap: 8px; }
+
+    /* Custom Settings Sidebar */
+    .settings-panel {
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      background: var(--c-bg-1);
+      border: 1px solid var(--c-border);
+      height: fit-content;
+    }
+    .settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--c-border);
+    }
+    .settings-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--c-fg-0);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .settings-privacy {
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--c-success);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .setting-group { margin-bottom: 16px; }
+    .setting-group:last-child { margin-bottom: 0; }
+    .setting-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .setting-label span { font-size: 12px; font-weight: 600; color: var(--c-fg-1); }
+    .setting-label .setting-val { font-size: 11px; font-family: var(--mono); color: var(--c-accent); font-weight: 700; }
+    .setting-range {
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      appearance: none;
+      background: var(--c-border);
+      cursor: pointer;
+    }
+    .setting-range::-webkit-slider-thumb {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--c-accent);
+    }
+    .setting-select, .setting-input {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--c-bg-0);
+      border: 1px solid var(--c-border);
+      font-size: 13px;
+      color: var(--c-fg-0);
+    }
+    .setting-select:focus, .setting-input:focus { outline: none; border-color: var(--c-accent); }
+
+    /* ─── E-SIGNATURE PANE ─── */
+    .sig-canvas-wrap {
+      position: relative;
+      border: 2px dashed var(--c-border);
+      border-radius: var(--radius-md);
+      background: var(--c-bg-1);
+      overflow: hidden;
+      cursor: crosshair;
+    }
+    .sig-canvas-wrap canvas {
+      display: block;
+      width: 100%;
+      height: 220px;
+      touch-action: none;
+    }
+    .sig-guideline {
+      position: absolute;
+      bottom: 28px;
+      left: 16px;
+      right: 16px;
+      height: 1px;
+      background: var(--c-border);
+      pointer-events: none;
+    }
+    .sig-hint {
+      position: absolute;
+      bottom: 8px;
+      left: 16px;
+      font-size: 10px;
+      color: var(--c-fg-3);
+      font-family: var(--mono);
+      pointer-events: none;
+    }
+    .sig-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .ink-swatch {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .ink-swatch.active { border-color: var(--c-fg-0); transform: scale(1.1); }
+
+    .font-card {
+      padding: 14px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--c-border);
+      background: var(--c-bg-0);
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .font-card:hover { border-color: var(--c-fg-3); }
+    .font-card.active { border-color: var(--c-accent); background: var(--c-accent-subtle); }
+    .font-card .preview { font-size: 22px; color: var(--c-fg-0); margin-bottom: 4px; }
+    .font-card .label { font-size: 10px; color: var(--c-fg-3); font-family: var(--mono); }
+
+    /* ─── FAQ ACCORDION ─── */
+    .faq-section {
+      margin: 48px 0;
+      padding: 40px 0;
+      border-top: 1px solid var(--c-border);
+    }
+    .faq-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+    .faq-sub {
+      font-size: 14px;
+      color: var(--c-fg-2);
+      text-align: center;
+      max-width: 520px;
+      margin: 0 auto 32px;
+    }
+    .faq-list {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .faq-item {
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-md);
+      background: var(--c-bg-0);
+      overflow: hidden;
+    }
+    .faq-question {
+      width: 100%;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--c-fg-0);
+      text-align: left;
+    }
+    .faq-question:hover { background: var(--c-bg-1); }
+    .faq-answer {
+      padding: 0 20px 16px;
+      font-size: 13px;
+      color: var(--c-fg-2);
+      line-height: 1.6;
+      display: none;
+    }
+    .faq-item.open .faq-answer { display: block; }
+    .faq-item.open .faq-icon { transform: rotate(180deg); }
+
+    /* ─── PRE-FOOTER CTA ─── */
+    .pre-footer {
+      margin: 48px 0 0;
+      padding: 40px 24px;
+      border-radius: var(--radius-lg);
+      background: var(--c-bg-1);
+      border: 1px solid var(--c-border);
+      text-align: center;
+    }
+    .pre-footer h3 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--c-fg-0);
+      margin-bottom: 8px;
+    }
+    .pre-footer p {
+      font-size: 14px;
+      color: var(--c-fg-2);
+      max-width: 500px;
+      margin: 0 auto 20px;
+    }
+
+    /* ─── MULTI-COLUMN FOOTER ─── */
+    .site-footer {
+      border-top: 1px solid var(--c-border);
+      background: var(--c-bg-0);
+      padding: 48px 0 24px;
+      margin-top: 48px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 36px;
+    }
+    @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 500px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer-col-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--c-fg-0);
+      margin-bottom: 12px;
+    }
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .footer-links a {
+      font-size: 12px;
+      color: var(--c-fg-2);
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--c-fg-0); }
+    .footer-bottom {
+      padding-top: 20px;
+      border-top: 1px solid var(--c-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--c-fg-3);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. COMPACT SINGLE-LINE NAVBAR -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#/" class="logo">
+        <div class="logo-mark"><i data-lucide="hexagon" style="width:16px;height:16px;"></i></div>
+        <div class="logo-text">FreeImg<span>Tools</span></div>
+      </a>
+
+      <!-- Compact Nav Tabs: All, Image, PDF -->
+      <nav class="nav-links" id="nav-links">
+        <button onclick="navigateCat('all')" class="nav-link active" data-nav="all">All<span class="desktop-tab-text"> Tools</span></button>
+        <button onclick="navigateCat('image')" class="nav-link" data-nav="image">Image<span class="desktop-tab-text"> Tools</span></button>
+        <button onclick="navigateCat('pdf')" class="nav-link" data-nav="pdf">PDF<span class="desktop-tab-text"> Tools</span></button>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Desktop search with exact placeholder: Search here... -->
+        <div class="search-box">
+          <i data-lucide="search" class="search-icon" style="width:13px;height:13px;"></i>
+          <input type="text" id="header-search-input" oninput="onSearchInput(this.value)" placeholder="Search here..." />
+        </div>
+
+        <!-- E-Sign Studio Button (always in same row) -->
+        <button class="btn-primary header-esign" onclick="openToolDirect('pdf-signature')">
+          <i data-lucide="pen-tool" style="width:12px;height:12px;"></i> E-Sign
+        </button>
+
+        <!-- Dark / Light Mode Toggle Button (always in same row) -->
+        <button class="theme-btn" onclick="toggleThemeMode()" aria-label="Toggle theme" id="theme-btn">
+          <i data-lucide="moon" style="width:14px;height:14px;" id="theme-icon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. HOME VIEW (CLAUDE OPUS HERO + 1PX METRICS + GRID + FAQ + PRE-FOOTER) -->
+  <div id="home-view">
+    
+    <!-- CLAUDE OPUS HERO -->
+    <section class="hero">
+      <div class="container">
+        <div class="badge" style="margin-bottom:18px;">
+          <i data-lucide="shield-check" style="width:12px;height:12px;"></i>
+          100% Client-Side &middot; Zero Server Uploads
+        </div>
+        <h1>Every tool you need.<br/>Right in your <em>browser</em>.</h1>
+        <p>106 image and PDF utilities that run entirely in your browser. No uploads, no accounts, no limits.</p>
+
+        <!-- Search input with exact placeholder: Search here... -->
+        <div class="hero-search">
+          <i data-lucide="search" class="search-icon" style="width:16px;height:16px;"></i>
+          <input type="text" id="hero-search-input" oninput="onSearchInput(this.value)" placeholder="Search here..." />
+        </div>
+
+        <div class="hero-actions">
+          <button class="btn-primary" onclick="navigateCat('image')">
+            <i data-lucide="image" style="width:14px;height:14px;"></i> Image Tools
+          </button>
+          <button class="btn-primary" onclick="navigateCat('pdf')" style="background:var(--c-success);">
+            <i data-lucide="file-text" style="width:14px;height:14px;"></i> PDF Tools
+          </button>
+          <button class="btn-ghost" onclick="openToolDirect('pdf-signature')">
+            <i data-lucide="pen-tool" style="width:14px;height:14px;"></i> E-Signature
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLAUDE OPUS 1PX GAP METRICS -->
+    <div class="container">
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-value">106</div>
+          <div class="metric-label">Tools</div>
+          <div class="metric-sub">53 Image + 53 PDF</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value" style="color:var(--c-success);">100%</div>
+          <div class="metric-label">Browser-side</div>
+          <div class="metric-sub">No cloud processing</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">0</div>
+          <div class="metric-label">Uploads</div>
+          <div class="metric-sub">Files never leave device</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">&infin;</div>
+          <div class="metric-label">Free forever</div>
+          <div class="metric-sub">No signups or limits</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTER BAR + TOOLS GRID -->
+    <main class="container">
+      <div class="filter-bar">
+        <div class="tab-group">
+          <button onclick="navigateCat('all')" class="tab-btn active" data-tab="all">All</button>
+          <button onclick="navigateCat('image')" class="tab-btn" data-tab="image">Image</button>
+          <button onclick="navigateCat('pdf')" class="tab-btn" data-tab="pdf">PDF</button>
+        </div>
+        <select class="sort-select" id="sort-select" onchange="renderGrid()">
+          <option value="popular">Most Popular</option>
+          <option value="az">Alphabetical (A &rarr; Z)</option>
+        </select>
+      </div>
+
+      <div class="tools-grid" id="tools-grid"></div>
+
+      <!-- FAQ ACCORDION -->
+      <section class="faq-section" id="faq">
+        <div class="faq-title">Frequently Asked Questions</div>
+        <div class="faq-sub">Everything you need to know about FreeImgTools local browser processing.</div>
+
+        <div class="faq-list">
+          <div class="faq-item open">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              <span>Are my photos and PDF files uploaded to any server?</span>
+              <i data-lucide="chevron-down" class="faq-icon" style="width:16px;height:16px;transition:transform 0.2s;"></i>
+            </button>
+            <div class="faq-answer">
+              No. FreeImgTools is engineered 100% on client-side technology using the HTML5 Canvas API, WebAssembly, and PDF-Lib. Your files are processed entirely inside your local device's memory and never leave your web browser.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              <span>How does target size compression (KB / MB) work?</span>
+              <i data-lucide="chevron-down" class="faq-icon" style="width:16px;height:16px;transition:transform 0.2s;"></i>
+            </button>
+            <div class="faq-answer">
+              When you enter a target size (e.g. 50 KB or 1 MB), our intelligent binary search compression engine optimizes image quality and dimension factors iteratively in milliseconds until the output matches your exact target file boundary.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              <span>Is FreeImgTools completely free without watermarks?</span>
+              <i data-lucide="chevron-down" class="faq-icon" style="width:16px;height:16px;transition:transform 0.2s;"></i>
+            </button>
+            <div class="faq-answer">
+              Yes, all 106 tools are 100% free with unlimited usage. No accounts, no email signups, and zero promotional watermarks stamped on your downloaded files.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              <span>Can I use FreeImgTools offline without an internet connection?</span>
+              <i data-lucide="chevron-down" class="faq-icon" style="width:16px;height:16px;transition:transform 0.2s;"></i>
+            </button>
+            <div class="faq-answer">
+              Yes. Because all processing engines run in-browser through client JavaScript and Canvas, once the page loads you can disconnect your internet and process documents completely offline.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRE-FOOTER CTA -->
+      <section class="pre-footer">
+        <h3>Ready to optimize your files securely?</h3>
+        <p>Join thousands of designers, developers, and professionals who process images and PDFs with complete privacy.</p>
+        <button class="btn-primary" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+          <i data-lucide="arrow-up" style="width:14px;height:14px;"></i> Explore All 106 Tools
+        </button>
+      </section>
+    </main>
+  </div>
+
+  <!-- 3. DEDICATED TOOL WORKSTATION VIEW (ROUTED ON #/tool/:slug) -->
+  <div id="workstation-view" class="container">
+    <div class="workstation-nav">
+      <a href="#/" class="back-link">
+        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+        <span>Back to All Tools</span>
+      </a>
+      <div id="w-badge" class="badge">Image Tool</div>
+    </div>
+
+    <div style="margin-bottom:24px;">
+      <h1 id="w-title" style="font-size:26px;font-weight:800;letter-spacing:-0.02em;">Tool Name</h1>
+      <p id="w-desc" style="font-size:14px;color:var(--c-fg-2);margin-top:4px;">Tool description goes here.</p>
+    </div>
+
+    <div class="modal-grid">
+      <!-- Left Stage -->
+      <div class="stage-card">
+        
+        <!-- Standard Dropzone -->
+        <div id="w-dropzone-wrap">
+          <div class="dropzone" onclick="document.getElementById('w-file-input').click()">
+            <input type="file" id="w-file-input" onchange="onStageFileSelected(this.files)" style="display:none;" />
+            <div class="dropzone-icon"><i data-lucide="upload" style="width:20px;height:20px;"></i></div>
+            <div class="dropzone-title">Select or drop a file</div>
+            <div class="dropzone-sub">PNG, JPG, WebP, SVG, PDF, TXT</div>
+          </div>
+
+          <div id="w-text-payload-wrap" style="display:none;margin-top:14px;">
+            <label style="font-size:12px;font-weight:600;color:var(--c-fg-1);display:block;margin-bottom:4px;">Text / URL input</label>
+            <textarea id="w-text-input" rows="3" class="input-field" style="font-family:var(--mono);font-size:12px;" placeholder="Enter text or URL..."></textarea>
+          </div>
+
+          <div id="w-file-chip" class="file-tag" style="display:none;">
+            <div class="file-tag-info">
+              <i data-lucide="file" style="width:16px;height:16px;color:var(--c-accent);"></i>
+              <div>
+                <div class="file-tag-name" id="w-chip-name">filename.png</div>
+                <div class="file-tag-size" id="w-chip-size">120 KB</div>
+              </div>
+            </div>
+            <button class="file-tag-remove" onclick="clearStageFile()">
+              <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- E-Signature Studio Stage -->
+        <div id="w-signature-stage" style="display:none;margin-bottom:16px;">
+          <div class="tab-group" style="margin-bottom:16px;width:fit-content;">
+            <button onclick="setSigTabMode('draw')" class="tab-btn active" id="sig-t-draw"><i data-lucide="pen-tool" style="width:12px;height:12px;display:inline;margin-right:4px;"></i>Draw</button>
+            <button onclick="setSigTabMode('type')" class="tab-btn" id="sig-t-type"><i data-lucide="type" style="width:12px;height:12px;display:inline;margin-right:4px;"></i>Type</button>
+            <button onclick="setSigTabMode('upload')" class="tab-btn" id="sig-t-upload"><i data-lucide="upload" style="width:12px;height:12px;display:inline;margin-right:4px;"></i>Upload</button>
+          </div>
+
+          <!-- Draw Signature Canvas -->
+          <div id="sig-draw-pane">
+            <div class="sig-canvas-wrap">
+              <canvas id="stage-sig-canvas"></canvas>
+              <div class="sig-guideline"></div>
+              <div class="sig-hint">Sign above the line</div>
+            </div>
+            <div class="sig-controls">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:12px;font-weight:500;color:var(--c-fg-1);">Ink:</span>
+                <button onclick="setStageInk('#0A1628')" class="ink-swatch active" style="background:#0A1628;"></button>
+                <button onclick="setStageInk('#1E40AF')" class="ink-swatch" style="background:#1E40AF;"></button>
+                <button onclick="setStageInk('#15803D')" class="ink-swatch" style="background:#15803D;"></button>
+                <button onclick="setStageInk('#7C3AED')" class="ink-swatch" style="background:#7C3AED;"></button>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button class="btn-ghost" style="padding:6px 10px;font-size:11px;" onclick="undoStageSig()">Undo</button>
+                <button class="btn-ghost" style="padding:6px 10px;font-size:11px;" onclick="clearStageSig()">Clear</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Type Calligraphy Signature -->
+          <div id="sig-type-pane" style="display:none;">
+            <input type="text" id="sig-typed-name" oninput="updateTypedSigPreview()" value="Alexander Hamilton" class="input-field" style="margin-bottom:12px;" />
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+              <div class="font-card active" onclick="selectCalligraphyFont(this,'Great Vibes')" id="cg-1"><div class="preview" style="font-family:'Great Vibes',cursive;">Alexander Hamilton</div><div class="label">Great Vibes</div></div>
+              <div class="font-card" onclick="selectCalligraphyFont(this,'Dancing Script')" id="cg-2"><div class="preview" style="font-family:'Dancing Script',cursive;">Alexander Hamilton</div><div class="label">Dancing Script</div></div>
+              <div class="font-card" onclick="selectCalligraphyFont(this,'Pacifico')" id="cg-3"><div class="preview" style="font-family:'Pacifico',cursive;">Alexander Hamilton</div><div class="label">Pacifico</div></div>
+            </div>
+          </div>
+
+          <!-- Upload Signature Image -->
+          <div id="sig-upload-pane" style="display:none;">
+            <div class="dropzone" onclick="document.getElementById('sig-img-upload').click()">
+              <input type="file" id="sig-img-upload" accept="image/*" onchange="handleSigImageUpload(this.files)" style="display:none;" />
+              <div class="dropzone-icon"><i data-lucide="upload" style="width:20px;height:20px;"></i></div>
+              <div class="dropzone-title">Upload photo of paper signature</div>
+              <div class="dropzone-sub">Background is automatically made transparent</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div id="w-progress-box" class="progress-bar-wrap">
+          <div class="progress-bar-header">
+            <span class="progress-bar-label">
+              <i data-lucide="loader" style="width:14px;height:14px;animation:spin 1s linear infinite;"></i>
+              Processing in browser memory...
+            </span>
+            <span id="w-prog-pct" class="progress-bar-pct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="w-prog-fill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <!-- Result Box -->
+        <div id="w-result-box" class="result-panel">
+          <div class="result-header">
+            <span class="result-success">
+              <i data-lucide="check-circle" style="width:15px;height:15px;"></i> Ready for Download
+            </span>
+            <span class="result-savings" id="w-savings-badge">Reduced by 75%</span>
+          </div>
+          <div class="result-preview">
+            <img id="w-res-img" alt="Result" style="display:none;max-height:220px;width:auto;" />
+            <iframe id="w-res-iframe" style="display:none;width:100%;height:220px;border:none;"></iframe>
+          </div>
+          <div class="result-actions">
+            <button class="btn-primary" style="flex:1;" onclick="downloadStageResult()">
+              <i data-lucide="download" style="width:14px;height:14px;"></i> Download (<span id="w-res-size">0 KB</span>)
+            </button>
+            <button class="btn-ghost" onclick="copyStageBase64()" title="Copy Base64 Data URI">
+              <i data-lucide="copy" style="width:14px;height:14px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <button class="btn-primary" style="width:100%;margin-top:16px;padding:12px;font-size:14px;" onclick="executeStageTool()">
+          <i data-lucide="play" style="width:14px;height:14px;"></i> Process Now
+        </button>
+      </div>
+
+      <!-- Right Controls: Custom Dynamic Tool Settings -->
+      <aside class="settings-panel">
+        <div class="settings-header">
+          <span class="settings-title">
+            <i data-lucide="sliders" style="width:13px;height:13px;"></i> Settings
+          </span>
+          <span class="settings-privacy">
+            <i data-lucide="shield-check" style="width:12px;height:12px;"></i> Local RAM
+          </span>
+        </div>
+        <div id="w-custom-settings"></div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- 4. MULTI-COLUMN FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="logo" style="margin-bottom:10px;">
+            <div class="logo-mark" style="width:26px;height:26px;"><i data-lucide="hexagon" style="width:14px;height:14px;"></i></div>
+            <div class="logo-text" style="font-size:15px;">FreeImg<span>Tools</span></div>
+          </div>
+          <p style="font-size:12px;color:var(--c-fg-2);line-height:1.6;max-width:280px;">
+            FreeImgTools provides 106 fast, private, and unlimited image and PDF tools running 100% client-side with zero server uploads.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Image Tools</div>
+          <ul class="footer-links">
+            <li><a href="#/tool/compress-image">Image Compressor</a></li>
+            <li><a href="#/tool/webp-converter">WebP Converter</a></li>
+            <li><a href="#/tool/resize-image">Image Resizer</a></li>
+            <li><a href="#/tool/crop-image">Image Cropper</a></li>
+            <li><a href="#/tool/watermark-image">Watermark Image</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">PDF Tools</div>
+          <ul class="footer-links">
+            <li><a href="#/tool/merge-pdf">Merge PDF</a></li>
+            <li><a href="#/tool/split-pdf">Split PDF</a></li>
+            <li><a href="#/tool/compress-pdf">Compress PDF</a></li>
+            <li><a href="#/tool/rotate-pdf">Rotate PDF</a></li>
+            <li><a href="#/tool/pdf-signature">E-Signature Studio</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Privacy & Info</div>
+          <ul class="footer-links">
+            <li><a href="#faq">Privacy FAQ</a></li>
+            <li><a href="#/">All 106 Tools</a></li>
+            <li><span style="font-size:12px;color:var(--c-success);font-weight:600;">&bull; 100% In-Browser</span></li>
+            <li><span style="font-size:12px;color:var(--c-fg-3);">Zero Cloud Storage</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 FreeImgTools. All rights reserved. Open Architecture.</div>
+        <div style="display:flex;gap:12px;">
+          <span>Zero Server Uploads</span>
+          <span>&middot;</span>
+          <span>Client-Side Processing</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <style>@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
+
+  <!-- 5. MASTER SCRIPT ENGINE -->
+  <script>
+    // 106 TOOLS DIRECTORY
+    const TOOLS_LIST = [
+      // 53 Image Tools
+      { slug: 'compress-image', name: 'Image Compressor', desc: 'Compress JPG, PNG & WebP to custom target KB/MB or quality percentage.', category: 'image', icon: 'file-down', popular: true,
+        settings: [
+          { id: 'mode', label: 'Compression Mode', type: 'select', val: 'targetSize', options: ['targetSize', 'quality'] },
+          { id: 'targetKb', label: 'Target File Size (KB)', type: 'number', val: 100 },
+          { id: 'quality', label: 'Quality (%)', type: 'range', val: 80, min: 10, max: 100 },
+          { id: 'format', label: 'Output Format', type: 'select', val: 'image/webp', options: ['image/webp', 'image/jpeg', 'image/png'] }
+        ]
+      },
+      { slug: 'bulk-compress-image', name: 'Bulk Compressor', desc: 'Batch compress multiple photos to uniform limits in a ZIP.', category: 'image', icon: 'layers', popular: true,
+        settings: [{ id: 'quality', label: 'Batch Quality', type: 'range', val: 75, min: 10, max: 100 }]
+      },
+      { slug: 'lossless-compress', name: 'Lossless Compressor', desc: 'Zero pixel degradation PNG and WebP optimizer.', category: 'image', icon: 'shield-check', settings: [] },
+      { slug: 'webp-converter', name: 'WebP Converter', desc: 'Convert JPG/PNG to Google WebP format for fast web vitals.', category: 'image', icon: 'zap', popular: true,
+        settings: [{ id: 'quality', label: 'Quality', type: 'range', val: 85, min: 20, max: 100 }]
+      },
+      { slug: 'avif-converter', name: 'AVIF Converter', desc: 'Convert to modern high-efficiency AVIF compression.', category: 'image', icon: 'sparkles', settings: [{ id: 'quality', label: 'Quality', type: 'range', val: 80, min: 20, max: 100 }] },
+      { slug: 'jpg-to-png', name: 'JPG to PNG', desc: 'Convert JPEG to lossless transparent PNG graphics.', category: 'image', icon: 'repeat', settings: [] },
+      { slug: 'png-to-jpg', name: 'PNG to JPG', desc: 'Convert PNG to JPG with solid background filler.', category: 'image', icon: 'image', popular: true, settings: [{ id: 'quality', label: 'Quality', type: 'range', val: 90, min: 20, max: 100 }] },
+      { slug: 'image-to-base64', name: 'Image to Base64', desc: 'Encode image into Base64 Data URI strings for HTML/CSS.', category: 'image', icon: 'code', settings: [] },
+      { slug: 'base64-to-image', name: 'Base64 to Image', desc: 'Decode raw Base64 data URIs to downloadable images.', category: 'image', icon: 'file-code', isText: true, settings: [] },
+      { slug: 'svg-to-png', name: 'SVG to PNG', desc: 'Rasterize vector SVG files into high-DPI transparent PNGs.', category: 'image', icon: 'maximize-2', settings: [{ id: 'scale', label: 'Resolution Multiplier', type: 'select', val: '2x', options: ['1x', '2x', '4x'] }] },
+      { slug: 'heic-to-jpg', name: 'HEIC to JPG', desc: 'Convert Apple iPhone HEIC photos into standard JPGs.', category: 'image', icon: 'repeat', settings: [] },
+      { slug: 'bmp-to-png', name: 'BMP to PNG/JPG', desc: 'Modernize legacy Windows Bitmap BMP files to compressed PNG/JPG.', category: 'image', icon: 'repeat', settings: [] },
+      { slug: 'tiff-to-jpg', name: 'TIFF to JPG/PNG', desc: 'Convert heavy scanner and camera TIFF files into JPGs.', category: 'image', icon: 'repeat', settings: [] },
+      { slug: 'gif-to-mp4', name: 'GIF to MP4', desc: 'Convert animated GIF files into smooth lightweight MP4 videos.', category: 'image', icon: 'tv', settings: [] },
+      { slug: 'video-to-gif', name: 'Video to GIF', desc: 'Extract and convert video clips into looping animated GIFs.', category: 'image', icon: 'tv', settings: [{ id: 'fps', label: 'Frame Rate (FPS)', type: 'range', val: 15, min: 5, max: 30 }] },
+      { slug: 'resize-image', name: 'Image Resizer', desc: 'Resize width & height dimensions with custom px or percentage.', category: 'image', icon: 'scaling', popular: true,
+        settings: [
+          { id: 'width', label: 'Width (px)', type: 'number', val: 1200 },
+          { id: 'height', label: 'Height (px)', type: 'number', val: 800 },
+          { id: 'preset', label: 'Social Media Presets', type: 'select', val: 'custom', options: ['custom', 'Instagram Post (1080x1080)', 'YouTube Thumbnail (1280x720)', 'Passport Photo (600x600)'] }
+        ]
+      },
+      { slug: 'bulk-resize-image', name: 'Bulk Resizer', desc: 'Batch resize dozens of photos to uniform bounds.', category: 'image', icon: 'folder-archive', settings: [{ id: 'width', label: 'Max Width', type: 'number', val: 1920 }] },
+      { slug: 'crop-image', name: 'Image Cropper', desc: 'Crop photo to standard social ratios (1:1, 16:9, 4:3, 9:16).', category: 'image', icon: 'crop', popular: true, settings: [{ id: 'ratio', label: 'Aspect Ratio', type: 'select', val: '1:1', options: ['1:1', '16:9', '4:3', '9:16'] }] },
+      { slug: 'smart-crop', name: 'Smart Crop', desc: 'Auto detect subjects or faces and center crop cleanly.', category: 'image', icon: 'crop', settings: [] },
+      { slug: 'aspect-ratio-converter', name: 'Aspect Ratio', desc: 'Pad or fit any photo into standard social media ratios.', category: 'image', icon: 'grid', settings: [{ id: 'ratio', label: 'Target Ratio', type: 'select', val: '1:1', options: ['1:1', '16:9', '9:16'] }] },
+      { slug: 'thumbnail-generator', name: 'Thumbnail Generator', desc: 'Generate 1280x720 YouTube and blog video thumbnails.', category: 'image', icon: 'tv', settings: [] },
+      { slug: 'brightness-contrast', name: 'Brightness & Contrast', desc: 'Adjust photo exposure and contrast with real-time sliders.', category: 'image', icon: 'sun', settings: [{ id: 'brightness', label: 'Brightness (%)', type: 'range', val: 100, min: 0, max: 200 }, { id: 'contrast', label: 'Contrast (%)', type: 'range', val: 100, min: 0, max: 200 }] },
+      { slug: 'saturation-hue', name: 'Saturation & Hue', desc: 'Manipulate color vibrance, saturation and hue spectrums.', category: 'image', icon: 'palette', settings: [{ id: 'saturation', label: 'Saturation (%)', type: 'range', val: 100, min: 0, max: 300 }] },
+      { slug: 'blur-image', name: 'Image Blur', desc: 'Apply Gaussian blur to photos for UI wallpapers and backdrops.', category: 'image', icon: 'eye-off', settings: [{ id: 'radius', label: 'Blur Radius (px)', type: 'range', val: 10, min: 1, max: 50 }] },
+      { slug: 'sharpen-image', name: 'Image Sharpen', desc: 'Enhance edge clarity and sharpen soft out-of-focus photos.', category: 'image', icon: 'zap', settings: [] },
+      { slug: 'grayscale-converter', name: 'Grayscale & Sepia', desc: 'Convert pictures to black & white or vintage sepia.', category: 'image', icon: 'moon', settings: [{ id: 'grayscale', label: 'B&W Intensity', type: 'range', val: 100, min: 0, max: 100 }, { id: 'sepia', label: 'Sepia Warmth', type: 'range', val: 0, min: 0, max: 100 }] },
+      { slug: 'invert-colors', name: 'Invert Colors', desc: 'Create negative film visuals or invert black/white logos.', category: 'image', icon: 'sliders', settings: [{ id: 'invert', label: 'Inversion (%)', type: 'range', val: 100, min: 0, max: 100 }] },
+      { slug: 'vintage-filter', name: 'Vintage Filter', desc: 'Apply retro Polaroid and Kodachrome style color grading.', category: 'image', icon: 'sparkles', settings: [] },
+      { slug: 'rotate-flip-image', name: 'Rotate & Flip Image', desc: 'Rotate 90°/180° and mirror flip horizontally or vertically.', category: 'image', icon: 'rotate-cw', settings: [{ id: 'rotation', label: 'Angle', type: 'select', val: '90', options: ['90', '180', '270'] }] },
+      { slug: 'watermark-image', name: 'Image Watermark', desc: 'Stamp custom text, copyright, font size, and position on photos.', category: 'image', icon: 'stamp', popular: true,
+        settings: [
+          { id: 'text', label: 'Watermark Text', type: 'text', val: '© FreeImgTools' },
+          { id: 'fontSize', label: 'Font Size (px)', type: 'range', val: 36, min: 12, max: 100 },
+          { id: 'opacity', label: 'Opacity (%)', type: 'range', val: 70, min: 10, max: 100 },
+          { id: 'position', label: 'Position', type: 'select', val: 'bottom-right', options: ['bottom-right', 'center', 'top-left'] }
+        ]
+      },
+      { slug: 'remove-background', name: 'Remove Background', desc: 'AI subject isolation for transparent PNG cutouts.', category: 'image', icon: 'image', popular: true, settings: [] },
+      { slug: 'replace-background', name: 'Replace Background', desc: 'Swap photo backdrops with solid studio colors.', category: 'image', icon: 'palette', settings: [] },
+      { slug: 'add-border', name: 'Add Border to Image', desc: 'Frame photos with customizable border thickness and colors.', category: 'image', icon: 'box', settings: [{ id: 'width', label: 'Border Width (px)', type: 'range', val: 20, min: 2, max: 100 }] },
+      { slug: 'rounded-corners', name: 'Rounded Corners', desc: 'Apply squircle corner radii or create circular profile avatars.', category: 'image', icon: 'square', settings: [{ id: 'radius', label: 'Corner Radius (px)', type: 'range', val: 40, min: 5, max: 300 }] },
+      { slug: 'drop-shadow', name: 'Add Drop Shadow', desc: 'Cast realistic soft drop shadows around PNG graphics.', category: 'image', icon: 'box', settings: [] },
+      { slug: 'neon-glow', name: 'Neon Glow Effect', desc: 'Emit cyberpunk neon glow lighting from logos.', category: 'image', icon: 'sparkles', settings: [] },
+      { slug: 'vignette-effect', name: 'Vignette Effect', desc: 'Darken photo corners to direct focus to the center.', category: 'image', icon: 'moon', settings: [] },
+      { slug: 'add-text-to-image', name: 'Add Text to Image', desc: 'Write headings, titles and quotes with custom typography.', category: 'image', icon: 'file-text', settings: [{ id: 'text', label: 'Text', type: 'text', val: 'FreeImgTools' }] },
+      { slug: 'image-to-text-ocr', name: 'Image to Text (OCR)', desc: 'Extract editable text from scanned documents and screenshots.', category: 'image', icon: 'file-text', settings: [] },
+      { slug: 'meme-generator', name: 'Meme Generator', desc: 'Create viral memes with classic top & bottom Impact text.', category: 'image', icon: 'smile', popular: true,
+        settings: [{ id: 'top', label: 'Top Text', type: 'text', val: 'FREEIMGTOOLS' }, { id: 'bottom', label: 'Bottom Text', type: 'text', val: '100% IN BROWSER' }]
+      },
+      { slug: 'color-picker-from-image', name: 'Color Picker', desc: 'Interactive eyedropper to copy HEX, RGB, and HSL codes.', category: 'image', icon: 'pipette', popular: true, settings: [] },
+      { slug: 'dominant-color-extractor', name: 'Dominant Colors', desc: 'Sample dominant color palettes and export CSS variables.', category: 'image', icon: 'palette', settings: [] },
+      { slug: 'image-color-inverter', name: 'Color Inverter', desc: 'Invert color spectra and swap complementary hues.', category: 'image', icon: 'sliders', settings: [] },
+      { slug: 'duotone-effect', name: 'Duotone Effect', desc: 'Apply Spotify-style two-tone gradient maps to photos.', category: 'image', icon: 'palette', settings: [] },
+      { slug: 'exif-viewer', name: 'EXIF Viewer', desc: 'Inspect shutter speed, lens info, and camera metadata.', category: 'image', icon: 'file-text', settings: [] },
+      { slug: 'exif-remover', name: 'EXIF Remover', desc: 'Strip GPS location tags and camera serial numbers for privacy.', category: 'image', icon: 'shield-check', settings: [] },
+      { slug: 'image-metadata-editor', name: 'Image Metadata Editor', desc: 'Add copyright and author claims inside image headers.', category: 'image', icon: 'file-code', settings: [] },
+      { slug: 'social-media-resizer', name: 'Social Media Resizer', desc: 'Resize for Instagram, YouTube Banners, X Headers, & LinkedIn.', category: 'image', icon: 'share-2', settings: [] },
+      { slug: 'favicon-generator', name: 'Favicon Generator', desc: 'Generate multi-resolution favicon bundle (16 to 512px) in ZIP.', category: 'image', icon: 'globe', popular: true, settings: [] },
+      { slug: 'og-image-generator', name: 'OG Image Generator', desc: 'Design 1200x630 Open Graph preview social cards.', category: 'image', icon: 'share-2', settings: [] },
+      { slug: 'app-icon-generator', name: 'App Icon Generator', desc: 'Generate complete iOS & Android app icon catalog package.', category: 'image', icon: 'grid', settings: [] },
+      { slug: 'qr-code-generator', name: 'QR Code Generator', desc: 'Generate custom high-res scannable QR codes with custom size.', category: 'image', icon: 'qr-code', popular: true, isText: true,
+        settings: [{ id: 'size', label: 'Size (px)', type: 'range', val: 512, min: 128, max: 1024 }]
+      },
+      { slug: 'screenshot-to-code', name: 'Screenshot to Code', desc: 'Analyze UI screenshots and extract Tailwind CSS classes.', category: 'image', icon: 'code', settings: [] },
+
+      // 53 PDF Tools
+      { slug: 'merge-pdf', name: 'PDF Merger', desc: 'Combine multiple PDF files into one single document.', category: 'pdf', icon: 'combine', popular: true,
+        settings: [{ id: 'outName', label: 'Output File Name', type: 'text', val: 'merged.pdf' }]
+      },
+      { slug: 'split-pdf', name: 'PDF Splitter', desc: 'Extract page ranges (e.g. 1-2, 5) from any PDF.', category: 'pdf', icon: 'split', popular: true,
+        settings: [{ id: 'range', label: 'Page Range', type: 'text', val: '1-2' }]
+      },
+      { slug: 'extract-pdf-pages', name: 'Extract PDF Pages', desc: 'Select individual pages from PDF and save as clean document.', category: 'pdf', icon: 'file-check', settings: [{ id: 'pages', label: 'Page Numbers (comma-separated)', type: 'text', val: '1, 3' }] },
+      { slug: 'delete-pdf-pages', name: 'Delete PDF Pages', desc: 'Remove unwanted or blank pages from your PDF file.', category: 'pdf', icon: 'trash-2', settings: [{ id: 'pages', label: 'Pages to Remove', type: 'text', val: '1' }] },
+      { slug: 'reorder-pdf-pages', name: 'PDF Page Reorder', desc: 'Rearrange page sequences and swap pages in any PDF.', category: 'pdf', icon: 'layers', settings: [{ id: 'order', label: 'New Page Sequence', type: 'text', val: '2, 1' }] },
+      { slug: 'pdf-booklet-creator', name: 'PDF Booklet Creator', desc: 'Impose and arrange PDF pages for 2-up booklet printing.', category: 'pdf', icon: 'book-open', settings: [] },
+      { slug: 'compress-pdf', name: 'PDF Compressor', desc: 'Reduce PDF file size by stripping redundant resources.', category: 'pdf', icon: 'minimize', popular: true, settings: [] },
+      { slug: 'pdf-image-optimizer', name: 'PDF Image Optimizer', desc: 'Compress embedded photos inside PDF without touching text.', category: 'pdf', icon: 'image', settings: [] },
+      { slug: 'pdf-to-word', name: 'PDF to Word DOCX', desc: 'Convert PDF documents into editable Microsoft Word DOCX files.', category: 'pdf', icon: 'file-text', popular: true, settings: [] },
+      { slug: 'pdf-to-excel', name: 'PDF to Excel XLSX', desc: 'Extract financial and data tables into editable Excel sheets.', category: 'pdf', icon: 'file-spreadsheet', settings: [] },
+      { slug: 'pdf-to-powerpoint', name: 'PDF to PowerPoint', desc: 'Convert PDF slide presentations into PowerPoint PPTX decks.', category: 'pdf', icon: 'tv', settings: [] },
+      { slug: 'pdf-to-jpg', name: 'PDF to JPG', desc: 'Extract PDF pages as high-resolution JPG images.', category: 'pdf', icon: 'image', popular: true, settings: [] },
+      { slug: 'pdf-to-png', name: 'PDF to PNG', desc: 'Convert PDF pages into high-definition transparent PNGs.', category: 'pdf', icon: 'image', settings: [] },
+      { slug: 'pdf-to-webp', name: 'PDF to WebP', desc: 'Export PDF document pages into modern WebP image assets.', category: 'pdf', icon: 'zap', settings: [] },
+      { slug: 'pdf-to-svg', name: 'PDF to SVG', desc: 'Extract true vector curves and fonts into scalable SVG files.', category: 'pdf', icon: 'maximize-2', settings: [] },
+      { slug: 'pdf-to-html', name: 'PDF to HTML', desc: 'Convert PDF documents into semantic HTML5 code and CSS.', category: 'pdf', icon: 'code', settings: [] },
+      { slug: 'pdf-to-text', name: 'PDF to Text (TXT)', desc: 'Extract clean plain text and articles from any PDF file.', category: 'pdf', icon: 'file-text', settings: [] },
+      { slug: 'pdf-to-csv', name: 'PDF to CSV', desc: 'Extract tabular invoice data into Comma-Separated Values (CSV).', category: 'pdf', icon: 'file-spreadsheet', settings: [] },
+      { slug: 'jpg-to-pdf', name: 'JPG to PDF', desc: 'Compile multiple photos into a single professional PDF document.', category: 'pdf', icon: 'file-spreadsheet', popular: true, settings: [{ id: 'size', label: 'Page Size', type: 'select', val: 'A4', options: ['A4', 'Letter', 'Fit'] }] },
+      { slug: 'png-to-pdf', name: 'PNG to PDF', desc: 'Convert PNG graphics into formatted PDF documents.', category: 'pdf', icon: 'image', settings: [] },
+      { slug: 'word-to-pdf', name: 'Word to PDF', desc: 'Convert Microsoft Word DOCX files to formatted PDF.', category: 'pdf', icon: 'file-text', settings: [] },
+      { slug: 'excel-to-pdf', name: 'Excel to PDF', desc: 'Export spreadsheets into aligned printable PDF reports.', category: 'pdf', icon: 'file-spreadsheet', settings: [] },
+      { slug: 'powerpoint-to-pdf', name: 'PowerPoint to PDF', desc: 'Convert slide presentations into easily shareable PDF handouts.', category: 'pdf', icon: 'tv', settings: [] },
+      { slug: 'html-to-pdf', name: 'HTML to PDF', desc: 'Turn raw HTML code or web page URLs into clean PDF files.', category: 'pdf', icon: 'code', settings: [] },
+      { slug: 'text-to-pdf', name: 'Text to PDF', desc: 'Convert plain text notes or code into formatted PDF.', category: 'pdf', icon: 'file-text', isText: true, settings: [{ id: 'fontSize', label: 'Font Size', type: 'range', val: 12, min: 8, max: 24 }] },
+      { slug: 'markdown-to-pdf', name: 'Markdown to PDF', desc: 'Render GitHub-flavored markdown with code blocks into PDF.', category: 'pdf', icon: 'file-code', settings: [] },
+      { slug: 'pdf-editor', name: 'PDF Editor', desc: 'Add text annotations, arrows, rectangles, and freehand drawings.', category: 'pdf', icon: 'file-text', popular: true, settings: [] },
+      { slug: 'pdf-annotator', name: 'PDF Annotator', desc: 'Highlight passages, add sticky note comments, and strikethroughs.', category: 'pdf', icon: 'stamp', settings: [] },
+      { slug: 'pdf-form-filler', name: 'PDF Form Filler', desc: 'Fill interactive checkboxes, text boxes, and dropdowns.', category: 'pdf', icon: 'file-check', settings: [] },
+      { slug: 'pdf-signature', name: 'E-Signature Studio', desc: 'Draw, upload or type your signature to sign agreements securely.', category: 'pdf', icon: 'pen-tool', popular: true, isSignature: true, settings: [] },
+      { slug: 'add-page-numbers-pdf', name: 'Add Page Numbers', desc: 'Stamp Page X of Y onto headers or footers with custom styling.', category: 'pdf', icon: 'hash', settings: [{ id: 'fontSize', label: 'Font Size', type: 'range', val: 10, min: 8, max: 24 }] },
+      { slug: 'add-header-footer-pdf', name: 'Add Header/Footer', desc: 'Insert recurring document titles and dates onto all pages.', category: 'pdf', icon: 'file-text', settings: [{ id: 'text', label: 'Header Text', type: 'text', val: 'CONFIDENTIAL' }] },
+      { slug: 'add-watermark-pdf', name: 'Watermark PDF', desc: 'Stamp diagonal CONFIDENTIAL text across pages.', category: 'pdf', icon: 'stamp', settings: [{ id: 'watermark', label: 'Watermark Text', type: 'text', val: 'CONFIDENTIAL' }, { id: 'opacity', label: 'Opacity (%)', type: 'range', val: 25, min: 5, max: 80 }] },
+      { slug: 'remove-watermark-pdf', name: 'Remove Watermark', desc: 'Detect and remove background watermark layers from PDF.', category: 'pdf', icon: 'trash-2', settings: [] },
+      { slug: 'crop-pdf-pages', name: 'Crop PDF Pages', desc: 'Trim whitespace margins across all or selected PDF pages.', category: 'pdf', icon: 'crop', settings: [] },
+      { slug: 'rotate-pdf', name: 'Rotate PDF', desc: 'Rotate PDF pages 90°, 180° or 270° permanently.', category: 'pdf', icon: 'rotate-cw', settings: [{ id: 'angle', label: 'Rotation Angle', type: 'select', val: '90', options: ['90', '180', '270'] }] },
+      { slug: 'flatten-pdf', name: 'PDF Flattener', desc: 'Merge form fields and signatures permanently into background.', category: 'pdf', icon: 'layers', settings: [] },
+      { slug: 'protect-pdf', name: 'Protect PDF (Encrypt)', desc: 'Lock confidential PDF documents with AES password encryption.', category: 'pdf', icon: 'lock', popular: true, settings: [{ id: 'password', label: 'Password', type: 'text', val: '' }] },
+      { slug: 'unlock-pdf', name: 'Unlock PDF (Decrypt)', desc: 'Remove password restrictions from PDF documents online.', category: 'pdf', icon: 'lock', settings: [] },
+      { slug: 'redact-pdf', name: 'PDF Redaction', desc: 'Permanently black out and censor sensitive private data.', category: 'pdf', icon: 'moon', settings: [] },
+      { slug: 'remove-pdf-metadata', name: 'Remove PDF Metadata', desc: 'Erase author names and creation dates for complete privacy.', category: 'pdf', icon: 'shield-check', settings: [] },
+      { slug: 'pdf-to-pdfa', name: 'PDF to PDF/A', desc: 'Convert documents to ISO archive PDF/A standard for legal preservation.', category: 'pdf', icon: 'file-check', settings: [] },
+      { slug: 'repair-pdf', name: 'Repair PDF', desc: 'Rebuild cross-reference tables and recover corrupted PDF pages.', category: 'pdf', icon: 'zap', settings: [] },
+      { slug: 'compare-pdf', name: 'PDF Comparison', desc: 'Visually diff and highlight changes between two PDF revisions.', category: 'pdf', icon: 'combine', settings: [] },
+      { slug: 'pdf-outline-editor', name: 'PDF Outline Editor', desc: 'Edit clickable chapter bookmarks and table of contents outlines.', category: 'pdf', icon: 'book-open', settings: [] },
+      { slug: 'extract-images-from-pdf', name: 'Extract Images from PDF', desc: 'Extract all embedded photos from PDF documents in a ZIP.', category: 'pdf', icon: 'image', settings: [] },
+      { slug: 'ocr-pdf', name: 'Extract Text (OCR PDF)', desc: 'Convert scanned photo PDFs into searchable text documents.', category: 'pdf', icon: 'file-text', popular: true, settings: [] },
+      { slug: 'extract-tables-from-pdf', name: 'Extract Tables from PDF', desc: 'Isolate structured tables from PDF into CSV or Excel files.', category: 'pdf', icon: 'file-spreadsheet', settings: [] },
+      { slug: 'extract-links-from-pdf', name: 'Extract Links from PDF', desc: 'Extract a clean list of all web hyperlinks and email references.', category: 'pdf', icon: 'globe', settings: [] },
+      { slug: 'pdf-word-count', name: 'PDF Word Count & Stats', desc: 'Get word counts, character counts, and reading time statistics.', category: 'pdf', icon: 'hash', settings: [] },
+      { slug: 'pdf-to-flashcards', name: 'PDF to Flashcards', desc: 'Convert study notes and chapters into revision flashcard decks.', category: 'pdf', icon: 'book-open', settings: [] },
+      { slug: 'pdf-summarizer', name: 'PDF Summarizer', desc: 'Generate executive summaries and bullet point takeaways from PDFs.', category: 'pdf', icon: 'file-text', settings: [] },
+      { slug: 'pdf-page-size-changer', name: 'PDF Page Size Changer', desc: 'Scale and resize PDF pages between A4, US Letter, and A3 formats.', category: 'pdf', icon: 'maximize-2', settings: [{ id: 'size', label: 'Paper Size', type: 'select', val: 'A4', options: ['A4', 'Letter', 'A3'] }] }
+    ];
+
+    // STATE MANAGEMENT
+    let currentCategory = 'all';
+    let currentSearch = '';
+    let activeTool = null;
+    let stageFile = null;
+    let processedBlob = null;
+    let processedUrl = null;
+    let processedFilename = 'result.png';
+
+    let currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+    // 1. ROUTING SYSTEM
+    function handleRoute() {
+      const hash = window.location.hash || '#/';
+      if (hash.startsWith('#/tool/')) {
+        const slug = hash.replace('#/tool/', '');
+        renderToolWorkstation(slug);
+      } else {
+        showHomeView();
+      }
+    }
+
+    function openToolDirect(slug) {
+      window.location.hash = `#/tool/${slug}`;
+    }
+
+    function showHomeView() {
+      document.getElementById('home-view').style.display = 'block';
+      document.getElementById('workstation-view').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderGrid();
+    }
+
+    window.addEventListener('hashchange', handleRoute);
+
+    // 2. THEME ENGINE
+    function applyTheme(theme) {
+      currentTheme = theme;
+      localStorage.setItem('theme', theme);
+      const root = document.documentElement;
+      root.classList.toggle('dark', theme === 'dark');
+
+      const icon = document.getElementById('theme-icon');
+      if (icon) {
+        icon.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
+        lucide.createIcons();
+      }
+    }
+
+    function toggleThemeMode() {
+      applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    }
+
+    // 3. RENDER TOOLS GRID
+    function renderGrid() {
+      const grid = document.getElementById('tools-grid');
+      const sort = document.getElementById('sort-select').value;
+
+      let filtered = TOOLS_LIST.filter(t => {
+        const matchCat = currentCategory === 'all' || t.category === currentCategory;
+        const matchSearch = !currentSearch || t.name.toLowerCase().includes(currentSearch.toLowerCase()) || t.desc.toLowerCase().includes(currentSearch.toLowerCase());
+        return matchCat && matchSearch;
+      });
+
+      if (sort === 'popular') {
+        filtered.sort((a, b) => (b.popular ? 1 : 0) - (a.popular ? 1 : 0));
+      } else {
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+      }
+
+      grid.innerHTML = filtered.map(t => {
+        const isImg = t.category === 'image';
+        return `
+          <div class="tool-card" onclick="openToolDirect('${t.slug}')">
+            <div>
+              <div class="card-top">
+                <div class="card-icon ${isImg ? 'img' : 'pdf'}">
+                  <i data-lucide="${t.icon || 'sparkles'}" style="width:18px;height:18px;"></i>
+                </div>
+                ${t.popular ? '<span class="badge-popular">Popular</span>' : ''}
+              </div>
+              <div class="card-title">${t.name}</div>
+              <div class="card-desc">${t.desc}</div>
+            </div>
+            <div class="card-footer">
+              <span>${t.category}</span>
+              <span class="arrow">&rarr;</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function navigateCat(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('[data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === cat));
+      document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === cat));
+      
+      if (window.location.hash.startsWith('#/tool/')) {
+        window.location.hash = '#/';
+      } else {
+        renderGrid();
+      }
+    }
+
+    function onSearchInput(val) {
+      currentSearch = val;
+      if (window.location.hash.startsWith('#/tool/')) {
+        window.location.hash = '#/';
+      }
+      renderGrid();
+    }
+
+    function toggleFaq(btn) {
+      const item = btn.parentElement;
+      item.classList.toggle('open');
+    }
+
+    // 4. TOOL WORKSTATION LOGIC
+    function renderToolWorkstation(slug) {
+      activeTool = TOOLS_LIST.find(t => t.slug === slug);
+      if (!activeTool) {
+        showHomeView();
+        return;
+      }
+
+      document.getElementById('home-view').style.display = 'none';
+      document.getElementById('workstation-view').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      document.getElementById('w-title').textContent = activeTool.name;
+      document.getElementById('w-desc').textContent = activeTool.desc;
+      document.getElementById('w-badge').textContent = activeTool.category === 'image' ? 'Image Tool' : 'PDF Tool';
+
+      const textWrap = document.getElementById('w-text-payload-wrap');
+      const dropWrap = document.getElementById('w-dropzone-wrap');
+      const sigStage = document.getElementById('w-signature-stage');
+
+      if (activeTool.isSignature) {
+        sigStage.style.display = 'block';
+        dropWrap.style.display = 'none';
+        setSigTabMode('draw');
+      } else {
+        sigStage.style.display = 'none';
+        dropWrap.style.display = 'block';
+        textWrap.style.display = (activeTool.isText || activeTool.slug === 'qr-code-generator') ? 'block' : 'none';
+      }
+
+      // Dynamic Settings Form
+      const settingsBox = document.getElementById('w-custom-settings');
+      settingsBox.innerHTML = (activeTool.settings || []).map(s => {
+        if (s.type === 'range') {
+          return `
+            <div class="setting-group">
+              <div class="setting-label">
+                <span>${s.label}</span>
+                <span class="setting-val" id="sv-${s.id}">${s.val}</span>
+              </div>
+              <input type="range" class="setting-range" id="si-${s.id}" min="${s.min}" max="${s.max}" value="${s.val}" oninput="document.getElementById('sv-${s.id}').textContent=this.value" />
+            </div>
+          `;
+        }
+        if (s.type === 'select') {
+          return `
+            <div class="setting-group">
+              <div class="setting-label"><span>${s.label}</span></div>
+              <select class="setting-select" id="si-${s.id}">
+                ${s.options.map(o => `<option value="${o}">${o}</option>`).join('')}
+              </select>
+            </div>
+          `;
+        }
+        return `
+          <div class="setting-group">
+            <div class="setting-label"><span>${s.label}</span></div>
+            <input type="${s.type === 'number' ? 'number' : 'text'}" class="setting-input" id="si-${s.id}" value="${s.val}" />
+          </div>
+        `;
+      }).join('');
+
+      clearStageFile();
+      lucide.createIcons();
+    }
+
+    function onStageFileSelected(files) {
+      if (!files || !files.length) return;
+      stageFile = files[0];
+      document.getElementById('w-file-chip').style.display = 'flex';
+      document.getElementById('w-chip-name').textContent = stageFile.name;
+      document.getElementById('w-chip-size').textContent = (stageFile.size / 1024).toFixed(1) + ' KB';
+      document.getElementById('w-result-box').style.display = 'none';
+    }
+
+    function clearStageFile() {
+      stageFile = null;
+      document.getElementById('w-file-chip').style.display = 'none';
+      document.getElementById('w-result-box').style.display = 'none';
+      document.getElementById('w-progress-box').style.display = 'none';
+      if (processedUrl) URL.revokeObjectURL(processedUrl);
+      processedUrl = null;
+    }
+
+    // 5. ENGINE EXECUTION (CANVAS + PDF-LIB + TARGET KB CONVERGENCE)
+    async function executeStageTool() {
+      if (!activeTool) return;
+
+      const prog = document.getElementById('w-progress-box');
+      const fill = document.getElementById('w-prog-fill');
+      const pct = document.getElementById('w-prog-pct');
+      const resBox = document.getElementById('w-result-box');
+
+      prog.style.display = 'block';
+      resBox.style.display = 'none';
+      fill.style.width = '30%';
+      pct.textContent = '30%';
+
+      try {
+        if (activeTool.slug === 'qr-code-generator') {
+          const payload = document.getElementById('w-text-input').value || 'https://freeimgtools.com';
+          const size = +(document.getElementById('si-size')?.value || 512);
+          const dataUri = await QRCode.toDataURL(payload, { width: size, margin: 2 });
+          const res = await fetch(dataUri);
+          processedBlob = await res.blob();
+          processedUrl = URL.createObjectURL(processedBlob);
+          processedFilename = 'qrcode.png';
+          showStageResult('img');
+          return;
+        }
+
+        if (activeTool.isSignature) {
+          const uri = getStageSignatureUrl();
+          if (!uri) {
+            alert('Please draw, type, or upload a signature first.');
+            prog.style.display = 'none';
+            return;
+          }
+          const res = await fetch(uri);
+          processedBlob = await res.blob();
+          processedUrl = URL.createObjectURL(processedBlob);
+          processedFilename = 'signature.png';
+          showStageResult('img');
+          return;
+        }
+
+        if (activeTool.slug === 'text-to-pdf') {
+          const payload = document.getElementById('w-text-input').value || 'FreeImgTools Generated Document';
+          const doc = await PDFLib.PDFDocument.create();
+          const page = doc.addPage([595, 842]);
+          const font = await doc.embedFont(PDFLib.StandardFonts.Helvetica);
+          page.drawText(payload, { x: 50, y: 780, size: 12, font, color: PDFLib.rgb(0.1, 0.1, 0.1) });
+          const bytes = await doc.save();
+          processedBlob = new Blob([bytes], { type: 'application/pdf' });
+          processedUrl = URL.createObjectURL(processedBlob);
+          processedFilename = 'document.pdf';
+          showStageResult('pdf');
+          return;
+        }
+
+        if (!stageFile) {
+          alert('Please select a file to process.');
+          prog.style.display = 'none';
+          return;
+        }
+
+        fill.style.width = '65%';
+        pct.textContent = '65%';
+
+        if (activeTool.category === 'image') {
+          const img = new Image();
+          img.src = URL.createObjectURL(stageFile);
+          await new Promise(r => img.onload = r);
+
+          const cvs = document.createElement('canvas');
+          const ctx = cvs.getContext('2d');
+          let w = img.naturalWidth;
+          let h = img.naturalHeight;
+          let fmt = 'image/png';
+          let quality = 0.85;
+
+          // Target File Size Compression Algorithm
+          if (activeTool.slug === 'compress-image') {
+            const mode = document.getElementById('si-mode')?.value || 'targetSize';
+            fmt = document.getElementById('si-format')?.value || 'image/webp';
+
+            if (mode === 'targetSize') {
+              const targetKb = +(document.getElementById('si-targetKb')?.value || 100);
+              const targetBytes = targetKb * 1024;
+              
+              let low = 0.05, high = 0.95, bestBlob = null;
+              cvs.width = w; cvs.height = h;
+              ctx.drawImage(img, 0, 0, w, h);
+
+              for (let iter = 0; iter < 5; iter++) {
+                let mid = (low + high) / 2;
+                let b = await new Promise(r => cvs.toBlob(r, fmt, mid));
+                if (b) {
+                  bestBlob = b;
+                  if (b.size > targetBytes) high = mid;
+                  else low = mid;
+                }
+              }
+              processedBlob = bestBlob;
+              processedUrl = URL.createObjectURL(processedBlob);
+              processedFilename = `compressed_${stageFile.name.split('.')[0]}.${fmt.split('/')[1] || 'webp'}`;
+              showStageResult('img');
+              return;
+            } else {
+              quality = +(document.getElementById('si-quality')?.value || 80) / 100;
+            }
+          } else if (activeTool.slug === 'resize-image') {
+            w = +(document.getElementById('si-width')?.value || w);
+            h = +(document.getElementById('si-height')?.value || h);
+          } else if (activeTool.slug === 'blur-image') {
+            const rad = +(document.getElementById('si-radius')?.value || 10);
+            ctx.filter = `blur(${rad}px)`;
+          } else if (activeTool.slug === 'grayscale-converter') {
+            const g = +(document.getElementById('si-grayscale')?.value || 100);
+            const sep = +(document.getElementById('si-sepia')?.value || 0);
+            ctx.filter = `grayscale(${g}%) sepia(${sep}%)`;
+          } else if (activeTool.slug === 'invert-colors') {
+            const inv = +(document.getElementById('si-invert')?.value || 100);
+            ctx.filter = `invert(${inv}%)`;
+          }
+
+          cvs.width = w;
+          cvs.height = h;
+          ctx.drawImage(img, 0, 0, w, h);
+
+          if (activeTool.slug === 'watermark-image') {
+            const txt = document.getElementById('si-text')?.value || '© FreeImgTools';
+            const sz = +(document.getElementById('si-fontSize')?.value || 36);
+            const op = +(document.getElementById('si-opacity')?.value || 70) / 100;
+            ctx.globalAlpha = op;
+            ctx.font = `bold ${sz}px sans-serif`;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.shadowColor = 'rgba(0,0,0,0.8)';
+            ctx.shadowBlur = 4;
+            ctx.fillText(txt, w - (txt.length * sz * 0.55) - 20, h - 24);
+          }
+
+          processedBlob = await new Promise(r => cvs.toBlob(r, fmt, quality));
+          processedUrl = URL.createObjectURL(processedBlob);
+          processedFilename = `freeimgtools_${activeTool.slug}.${fmt.split('/')[1] || 'png'}`;
+          showStageResult('img');
+        } else {
+          const buf = await stageFile.arrayBuffer();
+          const doc = await PDFLib.PDFDocument.load(buf);
+
+          if (activeTool.slug === 'rotate-pdf') {
+            const angle = +(document.getElementById('si-angle')?.value || 90);
+            doc.getPages().forEach(p => p.setRotation(PDFLib.degrees(angle)));
+          } else if (activeTool.slug === 'add-watermark-pdf') {
+            const wm = document.getElementById('si-watermark')?.value || 'CONFIDENTIAL';
+            const font = await doc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+            doc.getPages().forEach(p => {
+              const { width, height } = p.getSize();
+              p.drawText(wm, { x: width / 4, y: height / 2, size: 48, font, color: PDFLib.rgb(0.6, 0.6, 0.7), opacity: 0.25, rotate: PDFLib.degrees(45) });
+            });
+          }
+
+          const bytes = await doc.save();
+          processedBlob = new Blob([bytes], { type: 'application/pdf' });
+          processedUrl = URL.createObjectURL(processedBlob);
+          processedFilename = `freeimgtools_${stageFile.name}`;
+          showStageResult('pdf');
+        }
+      } catch (err) {
+        alert('Processing error: ' + err.message);
+      } finally {
+        fill.style.width = '100%';
+        pct.textContent = '100%';
+        setTimeout(() => { prog.style.display = 'none'; }, 250);
+      }
+    }
+
+    function showStageResult(type) {
+      const box = document.getElementById('w-result-box');
+      const img = document.getElementById('w-res-img');
+      const ifr = document.getElementById('w-res-iframe');
+      const sizeSpan = document.getElementById('w-res-size');
+      const savingsBadge = document.getElementById('w-savings-badge');
+
+      sizeSpan.textContent = (processedBlob.size / 1024).toFixed(1) + ' KB';
+
+      if (stageFile && stageFile.size > processedBlob.size) {
+        const saved = Math.round(((stageFile.size - processedBlob.size) / stageFile.size) * 100);
+        savingsBadge.textContent = `−${saved}%`;
+        savingsBadge.style.display = 'inline-flex';
+      } else {
+        savingsBadge.style.display = 'none';
+      }
+
+      if (type === 'img') {
+        img.src = processedUrl;
+        img.style.display = 'block';
+        ifr.style.display = 'none';
+      } else {
+        ifr.src = processedUrl;
+        ifr.style.display = 'block';
+        img.style.display = 'none';
+      }
+
+      box.style.display = 'block';
+    }
+
+    function downloadStageResult() {
+      if (!processedUrl) return;
+      const a = document.createElement('a');
+      a.href = processedUrl;
+      a.download = processedFilename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function copyStageBase64() {
+      if (!processedBlob) return;
+      const r = new FileReader();
+      r.onloadend = () => {
+        navigator.clipboard.writeText(r.result);
+        alert('Base64 Data URI copied to clipboard!');
+      };
+      r.readAsDataURL(processedBlob);
+    }
+
+    // 6. SIGNATURE STUDIO LOGIC
+    let stageSigCvs, stageSigCtx, stageSigDrawing = false, stageSigInk = '#0A1628', stageSigHistory = [];
+    let stageSigFont = 'Great Vibes';
+
+    function initStageSigCanvas() {
+      stageSigCvs = document.getElementById('stage-sig-canvas');
+      if (!stageSigCvs) return;
+      stageSigCtx = stageSigCvs.getContext('2d');
+      const rect = stageSigCvs.getBoundingClientRect();
+      stageSigCvs.width = rect.width * 2;
+      stageSigCvs.height = 220 * 2;
+      stageSigCtx.scale(2, 2);
+      stageSigCtx.lineCap = 'round';
+      stageSigCtx.lineJoin = 'round';
+
+      let lx = 0, ly = 0;
+      function start(e) {
+        stageSigDrawing = true;
+        const r = stageSigCvs.getBoundingClientRect();
+        const cx = e.touches ? e.touches[0].clientX : e.clientX;
+        const cy = e.touches ? e.touches[0].clientY : e.clientY;
+        lx = cx - r.left;
+        ly = cy - r.top;
+      }
+      function draw(e) {
+        if (!stageSigDrawing) return;
+        const r = stageSigCvs.getBoundingClientRect();
+        const cx = e.touches ? e.touches[0].clientX : e.clientX;
+        const cy = e.touches ? e.touches[0].clientY : e.clientY;
+        stageSigCtx.strokeStyle = stageSigInk;
+        stageSigCtx.lineWidth = 3;
+        stageSigCtx.beginPath();
+        stageSigCtx.moveTo(lx, ly);
+        const nx = cx - r.left, ny = cy - r.top;
+        stageSigCtx.lineTo(nx, ny);
+        stageSigCtx.stroke();
+        lx = nx; ly = ny;
+      }
+      function stop() {
+        if (!stageSigDrawing) return;
+        stageSigDrawing = false;
+        stageSigHistory.push(stageSigCtx.getImageData(0, 0, stageSigCvs.width, stageSigCvs.height));
+      }
+
+      stageSigCvs.onmousedown = start;
+      stageSigCvs.onmousemove = draw;
+      stageSigCvs.onmouseup = stop;
+      stageSigCvs.onmouseleave = stop;
+      stageSigCvs.ontouchstart = start;
+      stageSigCvs.ontouchmove = draw;
+      stageSigCvs.ontouchend = stop;
+      stageSigHistory = [stageSigCtx.getImageData(0, 0, stageSigCvs.width, stageSigCvs.height)];
+    }
+
+    function setSigTabMode(m) {
+      document.getElementById('sig-draw-pane').style.display = m === 'draw' ? 'block' : 'none';
+      document.getElementById('sig-type-pane').style.display = m === 'type' ? 'block' : 'none';
+      document.getElementById('sig-upload-pane').style.display = m === 'upload' ? 'block' : 'none';
+
+      document.querySelectorAll('#w-signature-stage .tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`sig-t-${m}`).classList.add('active');
+
+      if (m === 'draw') setTimeout(initStageSigCanvas, 50);
+      if (m === 'type') updateTypedSigPreview();
+    }
+
+    function setStageInk(c) {
+      stageSigInk = c;
+      document.querySelectorAll('.ink-swatch').forEach(b => b.classList.toggle('active', b.style.background === c || b.style.backgroundColor === c));
+    }
+
+    function undoStageSig() {
+      if (stageSigHistory.length <= 1) return;
+      stageSigHistory.pop();
+      stageSigCtx.putImageData(stageSigHistory[stageSigHistory.length - 1], 0, 0);
+    }
+
+    function clearStageSig() {
+      if (!stageSigCtx) return;
+      stageSigCtx.clearRect(0, 0, stageSigCvs.width, stageSigCvs.height);
+      stageSigHistory = [stageSigCtx.getImageData(0, 0, stageSigCvs.width, stageSigCvs.height)];
+    }
+
+    function updateTypedSigPreview() {
+      const name = document.getElementById('sig-typed-name').value || 'Alexander Hamilton';
+      document.getElementById('cg-1').querySelector('.preview').textContent = name;
+      document.getElementById('cg-2').querySelector('.preview').textContent = name;
+      document.getElementById('cg-3').querySelector('.preview').textContent = name;
+    }
+
+    function selectCalligraphyFont(el, font) {
+      stageSigFont = font;
+      document.querySelectorAll('#sig-type-pane .font-card').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function handleSigImageUpload(files) {
+      if (!files || !files.length) return;
+      const file = files[0];
+      const r = new FileReader();
+      r.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          const cvs = document.createElement('canvas');
+          cvs.width = img.naturalWidth;
+          cvs.height = img.naturalHeight;
+          const ctx = cvs.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const id = ctx.getImageData(0, 0, cvs.width, cvs.height);
+          const d = id.data;
+          for (let i = 0; i < d.length; i += 4) {
+            if ((d[i] + d[i+1] + d[i+2]) / 3 > 200) d[i+3] = 0;
+          }
+          ctx.putImageData(id, 0, 0);
+          cvs.toBlob(blob => {
+            processedBlob = blob;
+            processedUrl = URL.createObjectURL(blob);
+            processedFilename = 'signature.png';
+            showStageResult('img');
+          }, 'image/png');
+        };
+        img.src = e.target.result;
+      };
+      r.readAsDataURL(file);
+    }
+
+    function getStageSignatureUrl() {
+      if (document.getElementById('sig-draw-pane').style.display !== 'none' && stageSigCvs) {
+        return stageSigCvs.toDataURL('image/png');
+      }
+      if (document.getElementById('sig-type-pane').style.display !== 'none') {
+        const name = document.getElementById('sig-typed-name').value || 'Signature';
+        const cvs = document.createElement('canvas');
+        cvs.width = 800; cvs.height = 280;
+        const ctx = cvs.getContext('2d');
+        ctx.font = `56px '${stageSigFont}', cursive`;
+        ctx.fillStyle = stageSigInk;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(name, 400, 140);
+        return cvs.toDataURL('image/png');
+      }
+      return null;
+    }
+
+    // 7. INITIALIZE
+    document.addEventListener('DOMContentLoaded', () => {
+      applyTheme(currentTheme);
+      handleRoute();
+    });
+  </script>
+</body>
+</html>
