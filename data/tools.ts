@@ -151,3 +151,19 @@ export function getToolBySlug(slug: string) {
 export function getRelatedTools(category: string, currentSlug: string) {
   return TOOLS_LIST.filter(t => t.category === category && t.slug !== currentSlug).slice(0, 4);
 }
+
+export interface SettingField {
+  id: string;
+  label: string;
+  type: string;
+  [key: string]: any;
+}
+
+export interface ToolItem {
+  slug: string;
+  name: string;
+  desc: string;
+  category: string;
+  icon: string;
+  [key: string]: any;
+}
