@@ -15,24 +15,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
-      url: `${BASE_URL}/tools`,
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
-      url: `${BASE_URL}/image`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${BASE_URL}/pdf`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
       url: `${BASE_URL}/about`,
       lastModified: now,
       changeFrequency: "monthly",
@@ -42,10 +24,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Dynamic Tool Pages
   const toolPages: MetadataRoute.Sitemap = TOOLS_DATA.map((tool) => ({
-    url: `${BASE_URL}/tools/${tool.slug}`,
+    url: `${BASE_URL}/tool/${tool.slug}`,
     lastModified: now,
     changeFrequency: "weekly",
-    priority: tool.isFeatured ? 0.9 : 0.7,
+    priority: (tool as any).isFeatured ? 0.9 : 0.7,
   }));
 
   return [...staticPages, ...toolPages];

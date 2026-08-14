@@ -1,4 +1,4 @@
-export const TOOLS_LIST = [
+export const TOOLS_LIST: ToolItem[] = [
       // 53 Image Tools
       { slug: 'compress-image', name: 'Image Compressor', desc: 'Compress JPG, PNG & WebP to custom target KB/MB or quality percentage.', category: 'image', icon: 'file-down', popular: true,
         settings: [
