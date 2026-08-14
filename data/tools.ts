@@ -141,3 +141,13 @@ export const TOOLS_LIST = [
       { slug: 'pdf-summarizer', name: 'PDF Summarizer', desc: 'Generate executive summaries and bullet point takeaways from PDFs.', category: 'pdf', icon: 'file-text', settings: [] },
       { slug: 'pdf-page-size-changer', name: 'PDF Page Size Changer', desc: 'Scale and resize PDF pages between A4, US Letter, and A3 formats.', category: 'pdf', icon: 'maximize-2', settings: [{ id: 'size', label: 'Paper Size', type: 'select', val: 'A4', options: ['A4', 'Letter', 'A3'] }] }
     ];
+
+export const TOOLS_DATA = TOOLS_LIST;
+
+export function getToolBySlug(slug: string) {
+  return TOOLS_LIST.find(t => t.slug === slug);
+}
+
+export function getRelatedTools(category: string, currentSlug: string) {
+  return TOOLS_LIST.filter(t => t.category === category && t.slug !== currentSlug).slice(0, 4);
+}
