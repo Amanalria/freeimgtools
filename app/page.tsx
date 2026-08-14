@@ -1,7 +1,8 @@
 "use client";
 
-import React
-import { Icon } from "@/components/common/Icon";, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Icon } from "@/components/common/Icon";
+
 import Link from "next/link";
 import { TOOLS_LIST } from "@/data/tools";
 import { Navbar } from "@/components/layout/Navbar";
@@ -9,7 +10,7 @@ import { Footer } from "@/components/layout/Footer";
 
 export default function HomePage() {
   const [currentCat, setCurrentCat] = useState("all");
-  const [search, setSearch] = useState(");
+  const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("popular");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 

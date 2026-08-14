@@ -1,7 +1,8 @@
 "use client";
 
-import React
-import { Icon } from "@/components/common/Icon";, { useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Icon } from "@/components/common/Icon";
+
 import Link from "next/link";
 
 interface NavbarProps {

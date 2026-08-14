@@ -1,7 +1,8 @@
 "use client";
 
-import React
-import { Icon } from "@/components/common/Icon"; from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Icon } from "@/components/common/Icon";
+
 import Link from "next/link";
 
 export function Footer() {
